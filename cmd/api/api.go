@@ -7,18 +7,24 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/supersherm5/social/internal/storage"
 )
 
 type application struct {
 	config config
+	store *storage.Storage
 }
 
 type config struct {
 	addr string
+	db dbConfig
 }
 
 func (app *application) healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("OK"))
+	w.Header().Set("Content-Type", "text/plain")
+	if _, err := w.Write([]byte("OK")); err != nil {
+		log.Printf("error writing health response: %v", err)
+	}
 }
 
 func (app *application) mount() http.Handler {
